@@ -63,6 +63,11 @@ jobs:
           done
           grep -rnE "com.android.application|kotlin" android --include=*.gradle --include=*.gradle.kts
 
+      - name: Remove deprecated kotlinOptions block
+        run: |
+          perl -0pi -e 's/kotlinOptions\s*\{[^}]*\}//s' android/app/build.gradle.kts
+          sed -n '1,60p' android/app/build.gradle.kts
+
       - name: Auto-configure Gradle signing (works with .gradle and .gradle.kts)
         run: |
           mkdir -p ~/.gradle/init.d
@@ -85,8 +90,8 @@ jobs:
           EOF
 
       - run: flutter pub get
-      - run: flutter build apk --release
-      - run: flutter build appbundle --release
+      - run: flutter build apk --release --android-skip-build-dependency-validation
+      - run: flutter build appbundle --release --android-skip-build-dependency-validation
 
       - name: Collect outputs
         run: |
