@@ -55,10 +55,11 @@ jobs:
         run: |
           sed -i 's#distributionUrl=.*#distributionUrl=https\\://services.gradle.org/distributions/gradle-8.14-all.zip#' android/gradle/wrapper/gradle-wrapper.properties
 
-      - name: Upgrade Android Gradle Plugin
+      - name: Upgrade Android Gradle Plugin and Kotlin
         run: |
           sed -i -E 's/(com\.android\.application.{0,6}version .)[0-9.]+/\18.11.1/' android/settings.gradle*
-          grep -n "com.android.application" android/settings.gradle*
+          sed -i -E 's/(org\.jetbrains\.kotlin\.android.{0,6}version .)[0-9.]+/\12.2.20/' android/settings.gradle*
+          grep -nE "com.android.application|org.jetbrains.kotlin.android" android/settings.gradle*
 
       - name: Auto-configure Gradle signing (works with .gradle and .gradle.kts)
         run: |
