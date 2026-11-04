@@ -24,6 +24,16 @@ jobs:
           channel: stable
           cache: true
 
+      - name: Create token.env (asset missing from repo)
+        env:
+          TOKEN_ENV: ${{ secrets.TOKEN_ENV }}
+        run: |
+          if [ -n "$TOKEN_ENV" ]; then
+            echo "$TOKEN_ENV" > token.env
+          else
+            touch token.env
+          fi
+
       - name: Prepare keystore (uses secrets if set, else auto-generates)
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
@@ -74,7 +84,6 @@ jobs:
       - name: Remove deprecated kotlinOptions block
         run: |
           perl -0pi -e 's/kotlinOptions\s*\{[^}]*\}//s' android/app/build.gradle.kts
-          sed -n '1,70p' android/app/build.gradle.kts
 
       - name: Auto-configure Gradle signing (fallback if build file has none)
         run: |
